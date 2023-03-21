@@ -4,5 +4,5 @@ Testing trading strategies ( crypto, stocks, Currencies ), using historical data
 
 RESOURCES
 
-Walk Forward Optimization with VectorBT and Alpaca
-https://www.youtube.com/watch?v=GowmmrSMw9I
+Pandas TA: A complete Guide
+https://www.youtube.com/watch?v=W_kKPp9LEFY&t=792s
