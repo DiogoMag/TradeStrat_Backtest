@@ -14,15 +14,12 @@ df = pd.DataFrame({'Trades': [], 'Capital': []})
 def append_todf(tradesX, capitalX):
 
     global df
-    
+
     # Create a new row as a dictionary
     new_row = {'Trades': tradesX, 'Capital': capitalX}
 
     # Append the new row to the DataFrame with ignore_index=True
     df = df.append(new_row, ignore_index=True)
-
-    # Print the updated DataFrame
-    print(df)
 
 ## show graph function
 def plot_outcome():   
@@ -99,9 +96,12 @@ while True:
 
         # Counters
         wonTrades += 1
+        trades = wonTrades + lostTrades
 
         # PnL
         PnL = capital - iniCapital
+
+        append_todf(trades, capital)
 
 
 
@@ -120,9 +120,14 @@ while True:
         
         ## Counters
         lostTrades += 1
+        trades = wonTrades + lostTrades
+
 
         # PnL
         PnL = capital - iniCapital
+
+        append_todf(trades, capital)
+
 
     else:
         plot_outcome()
