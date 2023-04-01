@@ -1,7 +1,7 @@
 import os
 import seaborn as sns
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 os.system('cls')
 
@@ -15,15 +15,18 @@ def append_todf(tradesX, capitalX):
 
     global df
 
-    # Create a new row as a dictionary
-    new_row = {'Trades': tradesX, 'Capital': capitalX}
+    df.loc[len(df)] = {'Trades': tradesX, 'Capital': capitalX}
 
-    # Append the new row to the DataFrame with ignore_index=True
-    df = df.append(new_row, ignore_index=True)
-
-## show graph function
+## show graph function sns
 def plot_outcome():   
-    sns.lineplot(data=df)
+    sns.lineplot(x='Trades', y='Capital', data=df)
+    plt.show()
+
+def plot_outcome():
+    plt.plot(df['Trades'], df['Capital'])
+    plt.xlabel('Trades')
+    plt.ylabel('Capital')
+    plt.show()
 
 ## _______________________________________________________________________________________________________________
 
@@ -41,16 +44,16 @@ print()
 entry = capital * (risk/100)        
 entry = round(entry, 2)
 
-print(f'Initial entry will be of £{entry}')
+print(f'Initial entry  -->  £{entry}')
 print()
 lostTrades = 0
 wonTrades = 0
-winRate = None
+winRate = int()
 
 ## PnL
 PnL = float()
 
-print('Press any key to continue.')
+print("Press any 'ENTER' to START.")
 print()
 input()
 
@@ -72,11 +75,11 @@ while True:
     print()
     print('    ____________________________________    ')
     print()
-    print('          --- WIN RATE = ' + str(winRate) + '% --')
+    print(f'          --- WIN RATE = {int(winRate)}% --')
     print('WINS - ' + str(wonTrades) + '                        ' + 'LOSSES - ' + str(lostTrades))
     print('____________________________________________')
     print()
-    print('w / l ?')
+    print('ACTION  -  w / l / plot / tbl / save ?')
     outcome = str(input())
     if outcome == 'w':
         print()
@@ -129,8 +132,14 @@ while True:
         append_todf(trades, capital)
 
 
-    else:
+    elif outcome == 'plot':
         plot_outcome()
+
+    elif outcome == 'tbl':
+        print(df)
+
+    else:
+        print('XXXXXXXXXXXXXXXXXXXXXxxxxxxxxxx   wrong entry   xxxxxxxxxxXXXXXXXXXXXXXXXXXXXXX')
 
 
 
