@@ -1,19 +1,34 @@
 import os
 import seaborn as sns
 import pandas as pd
+import matplotlib as plt
 
 os.system('cls')
 
 ## Create data frame to save results for plotting
-df = pd.DataFrame({'Trades': [], 'Capital': [], 'Profit': []})
+df = pd.DataFrame({'Trades': [], 'Capital': []})
 
-## Define 'append to df' function
-def append_todf():
+## ______________________________________________________________________________________________ DEFINE FUNCTIONS
+
+## add row to dataframe function
+def append_todf(tradesX, capitalX):
+
     global df
+    
+    # Create a new row as a dictionary
+    new_row = {'Trades': tradesX, 'Capital': capitalX}
 
-## PLOT Function
+    # Append the new row to the DataFrame with ignore_index=True
+    df = df.append(new_row, ignore_index=True)
+
+    # Print the updated DataFrame
+    print(df)
+
+## show graph function
 def plot_outcome():   
     sns.lineplot(data=df)
+
+## _______________________________________________________________________________________________________________
 
 ## CAPITAL
 print("what's your starting capital ?")
