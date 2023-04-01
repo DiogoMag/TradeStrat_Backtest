@@ -1,6 +1,12 @@
 import os
+import seaborn as sns
+import pandas as pd
 
 os.system('cls')
+
+## Create data frame to save results for plotting
+df = pd.DataFrame({'Trades': [], 'Capital': [], 'Profit': []})
+
 
 print('what is your starting capital')
 capital = int(input())
@@ -10,16 +16,18 @@ risk = int(input())
 
 entry = capital * (risk/100)
 
-print(f'first entry will be of £{entry}')
+print(f'Initial entry will be of £{entry}')
 print()
 LostTrades = 0
 wonTrades = 0
 winRate = None
 
+print('Press any key to continue.')
+input()
+
 while True:
     print('____________________________________________')
-    print('WINS - ' + str(wonTrades) + '           ' + 'Current balance - ' + str(capital))
-    print('LOSSES - ' + str(LostTrades))
+    print('Current balance - ' + str(capital))
     if LostTrades == 0 and wonTrades > 0:
         winRate = 100
     elif LostTrades > 0 and wonTrades == 0:
@@ -27,7 +35,10 @@ while True:
     elif LostTrades > 0 and wonTrades > 0:
         winRate = (round(float(wonTrades),1) / round((float(LostTrades)+float(wonTrades)),1)) * 100
     print()
-    print('--- WIN RATE = ' + str(winRate) + '% --')
+    print('    ____________________________________    ')
+    print()
+    print('          --- WIN RATE = ' + str(winRate) + '% --')
+    print('WINS - ' + str(wonTrades) + '                       ' + 'LOSSES - ' + str(LostTrades))
     print('____________________________________________')
     print()
     print('w / l ?')
