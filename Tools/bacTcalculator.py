@@ -22,13 +22,19 @@ def plot_outcome():
     sns.lineplot(x='Trades', y='Capital', data=df)
     plt.show()
 
-def plot_outcome():
-    plt.plot(df['Trades'], df['Capital'])
-    plt.xlabel('Trades')
-    plt.ylabel('Capital')
-    plt.show()
+## save to csv
+def save_csv():
+    global stratTitle
+    df.to_csv(f'calculatorLogs/{stratTitle}.csv', index=False)
+
 
 ## _______________________________________________________________________________________________________________
+
+## CAPITAL
+print("Describe the strategy being tested.")
+stratTitle = str(input())
+print()
+
 
 ## CAPITAL
 print("what's your starting capital ?")
@@ -137,6 +143,9 @@ while True:
 
     elif outcome == 'tbl':
         print(df)
+
+    elif outcome == 'save':
+        save_csv()
 
     else:
         print('XXXXXXXXXXXXXXXXXXXXXxxxxxxxxxx   wrong entry   xxxxxxxxxxXXXXXXXXXXXXXXXXXXXXX')
