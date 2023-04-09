@@ -28,7 +28,7 @@ df = get_minute_data(asset, '1m', '120m')
 def animate(i):
     data = get_minute_data(asset, '1m', '120m')
     plt.cla()
-    plt.plot(data.index, data.Close)
+    plt.plot(data.index, data.Close, color='red', linewidth=3)
     plt.xlabel('Time')
     plt.ylabel('Price')
     plt.title(asset)
