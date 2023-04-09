@@ -27,10 +27,7 @@ def getAccount_balance(symbol):
     else:
         account_wallet = getAccount_balance('all') # Get account wallet
         if symbol in account_wallet['Asset'].values:
-            # Get balance for the specified asset
             balance = client.get_asset_balance(asset=symbol)
-            balanceFree = balance['free']
-            balanceLocked = balance['locked']
 
             return balance
         else:
@@ -39,9 +36,12 @@ def getAccount_balance(symbol):
             print('--')
             print()
 
+            return None
+
 
 
 
 ## test function
-print(getAccount_balance('CACA'))
-print(getAccount_balance('all'))
+# print(getAccount_balance('CACA'))
+# print(getAccount_balance('ETH'))
+# print(getAccount_balance('all'))
