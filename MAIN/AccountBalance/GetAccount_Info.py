@@ -22,20 +22,26 @@ def getAccount_balance(symbol):
         account_wallet[['Free', 'Locked']] = account_wallet[['Free', 'Locked']].round(4)
         pd.set_option('display.float_format', '{:.4f}'.format)
 
-
         return account_wallet
 
     else:
-        # Get balance for the specified asset
-        balance = client.get_asset_balance(asset=symbol)
-        balanceFree = balance['free']
-        balanceLocked = balance['locked']
+        account_wallet = getAccount_balance('all') # Get account wallet
+        if symbol in account_wallet['Asset'].values:
+            # Get balance for the specified asset
+            balance = client.get_asset_balance(asset=symbol)
+            balanceFree = balance['free']
+            balanceLocked = balance['locked']
 
-        return balance
+            return balance
+        else:
+            print('--')
+            print('You do not hold such asset.')
+            print('--')
+            print()
 
 
 
 
 ## test function
-print(getAccount_balance('BTC'))
+print(getAccount_balance('CACA'))
 print(getAccount_balance('all'))
