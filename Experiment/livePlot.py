@@ -22,4 +22,20 @@ def get_minute_data(symbol, interval, lookback):
     frame.index = pd.to_datetime(frame.index, unit='ms')
     frame = frame.astype(float)
     return frame
-    
+
+df = get_minute_data(asset, '1m', '120m')
+
+def animate(i):
+    data = get_minute_data(asset, '1m', '120m')
+    plt.cla()
+    plt.plot(data.index, data.Close)
+    plt.xlabel('Time')
+    plt.ylabel('Price')
+    plt.title(asset)
+    plt.gcf().autofmt_xdate()
+    plt.tight_layout()
+
+ani = FuncAnimation(plt.gcf(), animate, 1000)
+
+plt.tight_layout()
+plt.show()
