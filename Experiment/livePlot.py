@@ -35,7 +35,7 @@ def animate(i):
     plt.gcf().autofmt_xdate()
     plt.tight_layout()
 
-ani = FuncAnimation(plt.gcf(), animate, 1000)
+ani = FuncAnimation(plt.gcf(), animate, 10000)
 
 plt.tight_layout()
 plt.show()
