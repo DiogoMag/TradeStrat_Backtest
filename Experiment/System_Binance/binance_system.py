@@ -14,14 +14,16 @@ client = Client(os.environ.get('TEST_API'), os.environ.get('TEST_SAPI'), testnet
 def get_BIserver_status():
     server_status = client.get_system_status()
     server_status = server_status["msg"]
+
+    return server_status
+
+def get_BIserver_time():
     server_time = client.get_server_time()
     server_time = server_time["serverTime"]
     server_time = datetime.datetime.fromtimestamp(server_time/1000)
     server_time = server_time.replace(second=0, microsecond=0)
     server_time = server_time.strftime("%H:%M %d-%m-%Y")
-    print("")
-    print("Server status is " + server_status)
-    print("Server Time is " + server_time)
-    print("")
 
-get_BIserver_status()
+    return server_time
+
+print(get_BIserver_time())
