@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 from binance import Client
 import pandas as pd
 import os
