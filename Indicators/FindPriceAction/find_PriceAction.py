@@ -47,6 +47,5 @@ def find_marketsession(stamp):
     return session_list
 
 
-
 def find_reversal():
     print('this is a reversal')
