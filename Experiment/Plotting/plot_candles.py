@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import mplfinance as mpf
 from binance import Client
 import pandas as pd
 import os
@@ -21,20 +22,15 @@ def get_minute_data(symbol, interval, lookback):
     frame = frame.astype(float)
     return frame
 
-df = get_minute_data(asset, '1m', '120m')
+df = get_minute_data(asset, '5m', '120m')
 
-## PLOTING
-fig, ax = plt.subplots()
+##### PLOTING
 
-ax.plot(df.index, df['Open'], color='green', label='Open')
-ax.plot(df.index, df['High'], color='blue', label='High')
-ax.plot(df.index, df['Low'], color='red', label='Low')
-ax.plot(df.index, df['Close'], color='black', label='Close')
+# Define the market colors
+mc = mpf.make_marketcolors(up='g', down='r')
 
-ax.legend()
+# Create a custom style with the market colors
+my_style = mpf.make_mpf_style(marketcolors=mc)
 
-plt.title(asset + ' 1 Minute Klines')
-plt.xlabel('Time')
-plt.ylabel('Price')
-
-plt.show()
+# Plot the candlestick chart using the custom style
+mpf.plot(df, type='candle', title=asset + ' 1 Minute Klines', ylabel='Price', figratio=(16,8), style=my_style)
