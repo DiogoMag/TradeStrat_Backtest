@@ -5,6 +5,7 @@ import os
 
 os.system('cls')
 
+## Checks which 'trade timezone'/'session' a specific given timestamp is in
 def find_marketsession(stamp):
     
     # Convert timestamp to datetime object in UTC
@@ -46,6 +47,3 @@ def find_marketsession(stamp):
 
     return session_list
 
-
-def find_reversal():
-    print('this is a reversal')

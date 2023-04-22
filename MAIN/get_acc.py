@@ -53,6 +53,9 @@ def getAcc_balance(symbol):
 
 
 ## test function
-# print(getAccount_balance('CACA'))
-# print(getAccount_balance('ETH'))
-# print(getAccount_balance('all'))
+print('___')
+print(getAcc_balance('CACA'))
+print('___')
+print(getAcc_balance('ETH'))
+print('___')
+print(getAcc_balance('all'))

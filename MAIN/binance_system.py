@@ -26,4 +26,4 @@ def get_BIserver_time():
 
     return server_time
 
-print(get_BIserver_time())
+print(get_BIserver_status())
