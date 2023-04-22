@@ -9,7 +9,7 @@ os.system('cls')
 test_api_key = os.environ.get('TEST_API')
 test_api_secret = os.environ.get('TEST_SAPI')
 
-client = Client(test_api_key, test_api_secret, testnet=True)
+client = Client(test_api_key, test_api_secret)
 
 asset = 'BTCUSDT'
 
@@ -25,12 +25,12 @@ def get_minute_data(symbol, interval, lookback):
 df = get_minute_data(asset, '5m', '120m')
 
 ##### PLOTING
+def plot_df_to_kline():
+    # Define the market colors
+    mc = mpf.make_marketcolors(up='g', down='r')
 
-# Define the market colors
-mc = mpf.make_marketcolors(up='g', down='r')
+    # Create a custom style with the market colors
+    my_style = mpf.make_mpf_style(marketcolors=mc)
 
-# Create a custom style with the market colors
-my_style = mpf.make_mpf_style(marketcolors=mc)
-
-# Plot the candlestick chart using the custom style
-mpf.plot(df, type='candle', title=asset + ' 1 Minute Klines', ylabel='Price', figratio=(16,8), style=my_style)
+    # Plot the candlestick chart using the custom style
+    mpf.plot(df, type='candle', title=asset + ' 1 Minute Klines', ylabel='Price', figratio=(16,8), style=my_style)

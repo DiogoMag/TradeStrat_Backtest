@@ -1,74 +1,157 @@
 import os
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
 
 os.system('cls')
 
-print('what is your starting capital')
-capital = int(input())
+## Create data frame to save results for plotting
+df = pd.DataFrame({'Trades': [], 'Capital': []})
 
-print('what is your risk %')
-risk = int(input())
+## ______________________________________________________________________________________________ DEFINE FUNCTIONS
 
-entry = capital * (risk/100)
+## add row to dataframe function
+def append_todf(tradesX, capitalX):
 
-print(f'first entry will be of £{entry}')
+    global df
+
+    df.loc[len(df)] = {'Trades': tradesX, 'Capital': capitalX}
+
+## show graph function sns
+def plot_outcome():   
+    sns.lineplot(x='Trades', y='Capital', data=df)
+    plt.show()
+
+## save to csv
+def save_csv():
+    global stratTitle
+    df.to_csv(f'calculatorLogs/{stratTitle}.csv', index=False)
+
+
+## _______________________________________________________________________________________________________________
+
+## CAPITAL
+print("Describe the strategy being tested.")
+stratTitle = str(input())
 print()
-LostTrades = 0
+
+
+## CAPITAL
+print("what's your starting capital ?")
+capital = int(input())
+print()
+
+## RISK
+print("what's your risk % ?")
+risk = int(input())
+print()
+
+## ENTRY
+entry = capital * (risk/100)        
+entry = round(entry, 2)
+
+print(f'Initial entry  -->  £{entry}')
+print()
+lostTrades = 0
 wonTrades = 0
-winRate = None
+winRate = int()
+
+## PnL
+PnL = float()
+
+print("Press any 'ENTER' to START.")
+print()
+input()
 
 while True:
     print('____________________________________________')
-    print('WINS - ' + str(wonTrades) + '           ' + 'Current balance - ' + str(capital))
-    print('LOSSES - ' + str(LostTrades))
-    if LostTrades == 0 and wonTrades > 0:
-        winRate = 100
-    elif LostTrades > 0 and wonTrades == 0:
-        winRate = 0
-    elif LostTrades > 0 and wonTrades > 0:
-        winRate = (round(float(wonTrades),1) / round((float(LostTrades)+float(wonTrades)),1)) * 100
     print()
-    print('--- WIN RATE = ' + str(winRate) + '% --')
+    print(f'                           {lostTrades + wonTrades} Trades taken')
+    print(f'Previous P&L >   {round(PnL,2)} $')
+    print()
+    print(f'Balance >   {round(capital,2)} $')
+    print(f'Next entry >   {round(entry,2)} $')
+
+    if lostTrades == 0 and wonTrades > 0:
+        winRate = 100
+    elif lostTrades > 0 and wonTrades == 0:
+        winRate = 0
+    elif lostTrades > 0 and wonTrades > 0:
+        winRate = (round(float(wonTrades),1) / round((float(lostTrades)+float(wonTrades)),1)) * 100
+    print()
+    print('    ____________________________________    ')
+    print()
+    print(f'          --- WIN RATE = {int(winRate)}% --')
+    print('WINS - ' + str(wonTrades) + '                        ' + 'LOSSES - ' + str(lostTrades))
     print('____________________________________________')
     print()
-    print('w / l ?')
+    print('ACTION  -  w / l / plot / tbl / save ?')
     outcome = str(input())
     if outcome == 'w':
         print()
         print('% ?')
         Wcent = (float(input()) / 100 )
+        Wcent = Wcent * 30
+
+        iniCapital= capital
 
         entry = entry  * Wcent
-        entry = round(entry, 1)
 
         capital = capital + entry
-        capital = round(capital, 1)
 
         entry = capital * (risk/100)
-        print()
-        print('balance after trade - ' + str(capital))
-        print()
+
         
-        ## Counters
+        ## Update values
+
+        # Counters
         wonTrades += 1
+        trades = wonTrades + lostTrades
+
+        # PnL
+        PnL = capital - iniCapital
+
+        append_todf(trades, capital)
+
+
 
     elif outcome == 'l':
         print()
         print('% ?')
         Lcent = (float(input()) / 100 )
+        Lcent = Lcent * 30
+
+        iniCapital= capital
 
         entry = entry  * Lcent
-        entry = round(entry, 1)
 
         capital = capital - entry
-        capital = round(capital, 1)
 
         entry = capital * (risk/100)
-        print()
-        print('balance after trade - ' + str(capital))
-        print()
         
         ## Counters
-        LostTrades += 1
+        lostTrades += 1
+        trades = wonTrades + lostTrades
+
+
+        # PnL
+        PnL = capital - iniCapital
+
+        append_todf(trades, capital)
+
+
+    elif outcome == 'plot':
+        plot_outcome()
+
+    elif outcome == 'tbl':
+        print(df)
+
+    elif outcome == 'save':
+        save_csv()
+
+    else:
+        print('XXXXXXXXXXXXXXXXXXXXXxxxxxxxxxx   wrong entry   xxxxxxxxxxXXXXXXXXXXXXXXXXXXXXX')
+
 
 
 
