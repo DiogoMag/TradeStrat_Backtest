@@ -1,17 +1,12 @@
+# Import the yfinance. If you get module not found error the run !pip install yfinance from your Jupyter notebook
 import yfinance as yf
-import pandas as pd
+
+# Get the data for the stock AAPL
+data = yf.download('AAPL','2023-03-23','2023-04-23')
+
+# Import the plotting library
 import matplotlib.pyplot as plt
 
-# Set the ticker symbol and interval
-symbol = "EURUSD=X"
-period = '1day'
-interval = "15m"
-
-
-# Get the data from Yahoo Finance
-df = yf.download(symbol, period=period, interval=interval)
-
-# Remove the 'Volume' + 'Adj Close' column from the DataFrame
-df= df.drop(['Volume', 'Adj Close'], axis=1)
-
-
+# Plot the close price of the AAPL
+data['Adj Close'].plot()
+plt.show()

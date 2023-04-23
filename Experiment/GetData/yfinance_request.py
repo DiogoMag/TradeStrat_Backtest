@@ -15,3 +15,4 @@ df = yf.download(symbol, period=period, interval=interval)
 df= df.drop(['Volume', 'Adj Close'], axis=1)
 
 
+print(df.tail(10))
