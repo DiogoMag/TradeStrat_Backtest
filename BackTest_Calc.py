@@ -26,6 +26,7 @@ def plot_outcome():
 def save_csv():
     global stratTitle
     df.to_csv(f'calculatorLogs/{stratTitle}.csv', index=False)
+    print(' >>>>>>>>>>>>>>>>>>>>>>>>>> SAVED TO CSV <<<<<<<<<<<<<<<<<<<<<<<')
 
 
 ## _______________________________________________________________________________________________________________
