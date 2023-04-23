@@ -1,12 +1,15 @@
-# Import the yfinance. If you get module not found error the run !pip install yfinance from your Jupyter notebook
 import yfinance as yf
-
-# Get the data for the stock AAPL
-data = yf.download('AAPL','2023-03-23','2023-04-23')
-
-# Import the plotting library
 import matplotlib.pyplot as plt
+import pandas as pd
 
-# Plot the close price of the AAPL
-data['Adj Close'].plot()
-plt.show()
+# Set Variables
+symbol= 'EURUSD'
+sta_date= '2023-03-01'
+end_date= '2023-04-01'
+X_interval= '1wk'
+
+# download data for EUR/USD for the specified dates
+data = yf.download(f'{symbol}=X', start=sta_date, end=end_date, interval=X_interval)
+data = data.drop(['Volume', 'Adj Close'], axis=1)
+
+data.to_csv('TestData.csv')
