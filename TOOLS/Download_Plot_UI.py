@@ -14,11 +14,9 @@ X_period= '5d'
 data = yf.download(f'{symbol}=X', period=X_period, interval=X_interval)
 data = data.drop(['Volume', 'Adj Close'], axis=1)
 
-# Calculate MACD
-
 # Add SMA
 data['SMA 10'] = data.ta.sma(10)
 data['SMA 50'] = data.ta.sma(50)
 data['SMA 100'] = data.ta.sma(100)
 
-data.to_csv('TestData.csv')
+data.to_csv(f'{symbol}_{X_interval}_{X_period}.csv')
