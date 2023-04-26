@@ -14,17 +14,20 @@ class App:
 
         self.symbol_label = tk.Label(master, text="Symbol")
         self.symbol_label.pack()
-        self.symbol_entry = tk.Entry(master)
+        self.symbol_entry_var = tk.StringVar(value="EURUSD=X")
+        self.symbol_entry = tk.Entry(master, textvariable=self.symbol_entry_var)
         self.symbol_entry.pack()
 
         self.period_label = tk.Label(master, text="Period")
         self.period_label.pack()
         self.period_combobox = ttk.Combobox(master, values=["1d", "5d", "1mo", "1y", "5y", "ytd", "max"])
+        self.period_combobox.current(0)
         self.period_combobox.pack()
 
         self.interval_label = tk.Label(master, text="Interval")
         self.interval_label.pack()
         self.interval_combobox = ttk.Combobox(master, values=["1m", "5m", "15m", "30m", "60m", "1h", "1d", "1mo"])
+        self.interval_combobox.current(2)
         self.interval_combobox.pack()
 
         self.plot_button = tk.Button(master, text="Plot CSV", command=self.plot_csv)
@@ -34,8 +37,6 @@ class App:
         self.get_button.pack()
 
         self.this_csv = None
-
-        master.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def plot_df_to_kline(self, df):
         mc = mpf.make_marketcolors(up='g', down='r')
@@ -50,12 +51,7 @@ class App:
         data = yf.download(symbol, period=X_period, interval=X_interval)
         data = data.drop(['Volume', 'Adj Close'], axis=1)
         self.this_csv = f'{symbol}_{X_interval}_{X_period}.csv'
-        data.to_csv(self.this_csv)
-
-    def on_closing(self):
-        if self.this_csv is not None and os.path.exists(self.this_csv):
-            os.remove(self.this_csv)
-        self.master.destroy()
+        data.to_csv('TOOLS/calculatorLogs/' + self.this_csv)
 
     def plot_csv(self):
         file_path = filedialog.askopenfilename()
