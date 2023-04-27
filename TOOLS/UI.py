@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 import pandas as pd
+import pandas_ta as ta
 import yfinance as yf
 import mplfinance as mpf
 import os
@@ -10,7 +11,7 @@ class App:
     def __init__(self, master):
         self.master = master
         master.title("Data Fetcher")
-        master.geometry("400x300")
+        master.geometry("400x400")
 
         self.symbol_label = tk.Label(master, text="Symbol")
         self.symbol_label.pack()
@@ -20,15 +21,33 @@ class App:
 
         self.period_label = tk.Label(master, text="Period")
         self.period_label.pack()
-        self.period_combobox = ttk.Combobox(master, values=["1d", "5d", "1mo", "1y", "5y", "ytd", "max"])
+        self.period_combobox = ttk.Combobox(master, values=['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'])
         self.period_combobox.current(0)
         self.period_combobox.pack()
 
         self.interval_label = tk.Label(master, text="Interval")
         self.interval_label.pack()
-        self.interval_combobox = ttk.Combobox(master, values=["1m", "5m", "15m", "30m", "60m", "1h", "1d", "1mo"])
+        self.interval_combobox = ttk.Combobox(master, values=['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo'])
         self.interval_combobox.current(2)
         self.interval_combobox.pack()
+
+        separator = ttk.Separator(root, orient='horizontal')
+        separator.pack(fill='x', pady=10)
+
+        self.ema20_var = tk.BooleanVar(value=False)
+        self.ema50_var = tk.BooleanVar(value=False)
+        self.ema200_var = tk.BooleanVar(value=False)
+
+        self.ema20_checkbutton = tk.Checkbutton(master, text="EMA 20", variable=self.ema20_var)
+        self.ema20_checkbutton.pack()
+
+        self.ema50_checkbutton = tk.Checkbutton(master, text="EMA 50", variable=self.ema50_var)
+        self.ema50_checkbutton.pack()
+
+        self.ema200_checkbutton = tk.Checkbutton(master, text="EMA 200", variable=self.ema200_var)
+        self.ema200_checkbutton.pack()
+        separator = ttk.Separator(root, orient='horizontal')
+        separator.pack(fill='x', pady=10)
 
         self.plot_button = tk.Button(master, text="Plot CSV", command=self.plot_csv)
         self.plot_button.pack()
@@ -38,11 +57,63 @@ class App:
 
         self.this_csv = None
 
+
     def plot_df_to_kline(self, df):
+
+        print(self.ema20_var.get())
+        print(self.ema50_var.get())
+        print(self.ema200_var.get())
+
         mc = mpf.make_marketcolors(up='g', down='r')
         my_style = mpf.make_mpf_style(marketcolors=mc)
-        mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style)
 
+        # Create addplot list for EMAs
+        ### Single EMAs
+        if self.ema20_var.get() == True and self.ema50_var.get() == False and self.ema200_var.get() == False :
+            ema = mpf.make_addplot(df['EMA 20'], color='blue', width=0.7)
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=ema, show_nontrading=True)
+
+        elif self.ema20_var.get() == False and self.ema50_var.get() == True and self.ema200_var.get() == False :
+            ema = mpf.make_addplot(df['EMA 50'], color='green', width=0.7)
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=ema, show_nontrading=True)
+
+        elif self.ema20_var.get() == False and self.ema50_var.get() == False and self.ema200_var.get() == True :
+            ema = mpf.make_addplot(df['EMA 200'], color='orange', width=0.7)
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=ema, show_nontrading=True)
+        
+        ### 2 EMAs
+        elif self.ema20_var.get() == True and self.ema50_var.get() == True and self.ema200_var.get() == False :
+            ema1 = mpf.make_addplot(df['EMA 20'], color='blue', width=0.7)
+            ema2 = mpf.make_addplot(df['EMA 50'], color='green', width=0.7)
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=[ema1, ema2] , show_nontrading=True)
+        
+        elif self.ema20_var.get() == True and self.ema50_var.get() == False and self.ema200_var.get() == True :
+            ema1 = mpf.make_addplot(df['EMA 20'], color='blue', width=0.7)
+            ema3 = mpf.make_addplot(df['EMA 200'], color='orange', width=0.7)
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=[ema1, ema3] , show_nontrading=True)
+        
+        elif self.ema20_var.get() == False and self.ema50_var.get() == True and self.ema200_var.get() == True :
+            ema2 = mpf.make_addplot(df['EMA 50'], color='green', width=0.7)
+            ema3 = mpf.make_addplot(df['EMA 200'], color='orange', width=0.7)
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=[ema2, ema3] , show_nontrading=True)
+        
+        ### All 3 EMAs
+        elif self.ema20_var.get() == True and self.ema50_var.get() == True and self.ema200_var.get() == True :
+            ema1 = mpf.make_addplot(df['EMA 20'], color='blue', width=0.7)
+            ema2 = mpf.make_addplot(df['EMA 50'], color='green', width=0.7)
+            ema3 = mpf.make_addplot(df['EMA 200'], color='orange', width=0.7)
+
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=[ema1, ema2, ema3] , show_nontrading=True)
+
+
+
+        else:
+            ema = None        
+            mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, show_nontrading=True)
+
+
+
+        
     def get_data(self):
         symbol = self.symbol_entry.get()
         X_period = self.period_combobox.get()
@@ -50,8 +121,14 @@ class App:
 
         data = yf.download(symbol, period=X_period, interval=X_interval)
         data = data.drop(['Volume', 'Adj Close'], axis=1)
+
+        ## Add EMA 20 50 200
+        data['EMA 20'] = ta.ema(data['Close'], length=20)
+        data['EMA 50'] = ta.ema(data['Close'], length=50)
+        data['EMA 200'] = ta.ema(data['Close'], length=200)
+
         self.this_csv = f'{symbol}_{X_interval}_{X_period}.csv'
-        data.to_csv('TOOLS/calculatorLogs/' + self.this_csv)
+        data.to_csv('calculatorLogs/' + self.this_csv)
 
     def plot_csv(self):
         file_path = filedialog.askopenfilename()
