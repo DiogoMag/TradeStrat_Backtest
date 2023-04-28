@@ -5,27 +5,33 @@ import pandas as pd
 import pandas_ta as ta
 import yfinance as yf
 import mplfinance as mpf
-import os
+import datetime
 
 class App:
     def __init__(self, master):
         self.master = master
         master.title("Data Fetcher")
-        master.geometry("400x400")
+        master.geometry("500x500")
 
-        self.symbol_label = tk.Label(master, text="Symbol")
+
+        self.symbol_label = tk.Label(master, text="Symbol", font='bold')
         self.symbol_label.pack()
+        self.tips_label = tk.Label(master, text="(  Forex: 'EURUSD=X',   Crypto: 'BTC-USD',   Stocks: 'MSFT'  )")
+        self.tips_label.pack()
+        self.tips_label = tk.Label(master, text="Separate multiples with ' , '")
+        self.tips_label.pack()
+
         self.symbol_entry_var = tk.StringVar(value="EURUSD=X")
         self.symbol_entry = tk.Entry(master, textvariable=self.symbol_entry_var)
         self.symbol_entry.pack()
 
-        self.period_label = tk.Label(master, text="Period")
+        self.period_label = tk.Label(master, text="Period", font='bold')
         self.period_label.pack()
         self.period_combobox = ttk.Combobox(master, values=['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'])
         self.period_combobox.current(0)
         self.period_combobox.pack()
 
-        self.interval_label = tk.Label(master, text="Interval")
+        self.interval_label = tk.Label(master, text="Interval", font='bold')
         self.interval_label.pack()
         self.interval_combobox = ttk.Combobox(master, values=['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo'])
         self.interval_combobox.current(2)
@@ -57,16 +63,39 @@ class App:
 
         self.this_csv = None
 
+    def identify_session(tempo_str):
+        # convert tempo_str to datetime.time object
+        try:
+            tempo = datetime.datetime.strptime(tempo_str, '%H:%M:%S').time()
+        except ValueError:
+            tempo = datetime.datetime.strptime(tempo_str, '%H:%M').time()
+
+        # define time ranges and corresponding session values
+        time_ranges = [
+            (datetime.time(hour=13), datetime.time(hour=22), 'NewYork'),
+            (datetime.time(hour=7), datetime.time(hour=16), 'London'),
+            (datetime.time(hour=0), datetime.time(hour=9), 'Tokyo'),
+            (datetime.time(hour=0), datetime.time(hour=6), 'Sidney'),
+        ]
+        
+        # initialize session to an empty string
+        session = ""
+        
+        # check if the tempo is within any of the time ranges and concatenate session values if needed
+        for start_time, end_time, session_val in time_ranges:
+            if start_time <= tempo <= end_time:
+                if session == "":
+                    session = session_val
+                else:
+                    session += f",{session_val}"
+        
+        return session
 
     def plot_df_to_kline(self, df):
 
-        print(self.ema20_var.get())
-        print(self.ema50_var.get())
-        print(self.ema200_var.get())
-
         mc = mpf.make_marketcolors(up='g', down='r')
-        my_style = mpf.make_mpf_style(marketcolors=mc)
-
+        my_style = mpf.make_mpf_style(marketcolors=mc) 
+                
         # Create addplot list for EMAs
         ### Single EMAs
         if self.ema20_var.get() == True and self.ema50_var.get() == False and self.ema200_var.get() == False :
@@ -102,18 +131,12 @@ class App:
             ema1 = mpf.make_addplot(df['EMA 20'], color='blue', width=0.7)
             ema2 = mpf.make_addplot(df['EMA 50'], color='green', width=0.7)
             ema3 = mpf.make_addplot(df['EMA 200'], color='orange', width=0.7)
-
             mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, addplot=[ema1, ema2, ema3] , show_nontrading=True)
-
-
 
         else:
             ema = None        
             mpf.plot(df, type='candle', ylabel='Price', figratio=(16,8), style=my_style, show_nontrading=True)
-
-
-
-        
+    
     def get_data(self):
         symbol = self.symbol_entry.get()
         X_period = self.period_combobox.get()
