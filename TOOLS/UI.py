@@ -8,6 +8,7 @@ import mplfinance as mpf
 import datetime
 
 class App:
+    
     def __init__(self, master):
         self.master = master
         master.title("Data Fetcher")
@@ -63,34 +64,6 @@ class App:
 
         self.this_csv = None
 
-    def identify_session(tempo_str):
-        # convert tempo_str to datetime.time object
-        try:
-            tempo = datetime.datetime.strptime(tempo_str, '%H:%M:%S').time()
-        except ValueError:
-            tempo = datetime.datetime.strptime(tempo_str, '%H:%M').time()
-
-        # define time ranges and corresponding session values
-        time_ranges = [
-            (datetime.time(hour=13), datetime.time(hour=22), 'NewYork'),
-            (datetime.time(hour=7), datetime.time(hour=16), 'London'),
-            (datetime.time(hour=0), datetime.time(hour=9), 'Tokyo'),
-            (datetime.time(hour=0), datetime.time(hour=6), 'Sidney'),
-        ]
-        
-        # initialize session to an empty string
-        session = ""
-        
-        # check if the tempo is within any of the time ranges and concatenate session values if needed
-        for start_time, end_time, session_val in time_ranges:
-            if start_time <= tempo <= end_time:
-                if session == "":
-                    session = session_val
-                else:
-                    session += f",{session_val}"
-        
-        return session
-
     def plot_df_to_kline(self, df):
 
         mc = mpf.make_marketcolors(up='g', down='r')
@@ -144,6 +117,38 @@ class App:
 
         data = yf.download(symbol, period=X_period, interval=X_interval)
         data = data.drop(['Volume', 'Adj Close'], axis=1)
+
+        # Add a new column that indicates the session for each timestamp
+        sessions = []
+        for timestamp in data.index:
+            if timestamp.hour >= 13 and timestamp.hour < 22:
+                if timestamp.hour >=13 and timestamp.hour < 16:
+                    sessions.append('NewYork, London')
+                else: 
+                    sessions.append('NewYork')
+
+            elif timestamp.hour >= 7 and timestamp.hour < 16:
+                if timestamp.hour >=7 and timestamp.hour < 9:
+                    sessions.append('London, Tokyo')
+                else: 
+                    sessions.append('London')
+                
+            elif timestamp.hour >= 0 and timestamp.hour < 9:
+                if timestamp.hour >=0 and timestamp.hour < 6:
+                    sessions.append('Tokyo, Sindney')
+                else: 
+                    sessions.append('Tokyo')
+
+            elif timestamp.hour >= 21 or timestamp.hour < 6:
+                if timestamp.hour >=21 and timestamp.hour < 22:
+                    sessions.append('Sindney, NewYork')
+                else: 
+                    sessions.append('Sidney')
+
+            else:
+                sessions.append('DeadZone')
+
+        data['sessions'] = sessions
 
         ## Add EMA 20 50 200
         data['EMA 20'] = ta.ema(data['Close'], length=20)

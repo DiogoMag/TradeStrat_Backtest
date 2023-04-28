@@ -1,34 +1,24 @@
-import datetime
+import pandas as pd
 
-def identify_session(tempo_str):
-    # convert tempo_str to datetime.time object
-    try:
-        tempo = datetime.datetime.strptime(tempo_str, '%H:%M:%S').time()
-    except ValueError:
-        tempo = datetime.datetime.strptime(tempo_str, '%H:%M').time()
+# Assume the DataFrame is already loaded and stored in a variable called `df`
 
-    # define time ranges and corresponding session values
-    time_ranges = [
-        (datetime.time(hour=13), datetime.time(hour=22), 'NewYork'),
-        (datetime.time(hour=7), datetime.time(hour=16), 'London'),
-        (datetime.time(hour=0), datetime.time(hour=9), 'Tokyo'),
-        (datetime.time(hour=0), datetime.time(hour=6), 'Sidney'),
-    ]
+# Define a custom function to assign a session number based on time of day
+def assign_session(row):
+    hour = row['Datetime'].hour
     
-    # initialize session to an empty string
-    session = ""
-    
-    # check if the tempo is within any of the time ranges and concatenate session values if needed
-    for start_time, end_time, session_val in time_ranges:
-        if start_time <= tempo <= end_time:
-            if session == "":
-                session = session_val
-            else:
-                session += f",{session_val}"
-    
-    return session
+    if (hour >= 13 and hour <= 22):
+        return 'New York session'
+    elif (hour >= 7 and hour <= 16):
+        return 'London session'
+    elif (hour >= 0 and hour <= 9):
+        return 'Tokyo session'
+    elif (hour >= 21 or hour <= 6):
+        return 'Sidney session'
+    else:
+        return None
 
+# Apply the function to each row and assign the results to the 'sessions' column
+df['sessions'] = df.apply(assign_session, axis=1)
 
-
-
-print(identify_session('08:00:00'))
+# Print the updated DataFrame
+print(df)
