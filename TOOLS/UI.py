@@ -5,10 +5,9 @@ import pandas as pd
 import pandas_ta as ta
 import yfinance as yf
 import mplfinance as mpf
-import datetime
 
 class App:
-    
+
     def __init__(self, master):
         self.master = master
         master.title("Data Fetcher")
